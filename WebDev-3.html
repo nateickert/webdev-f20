@@ -100,10 +100,22 @@
      
       
         
-L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+    
         
          omnivore.csv('airports.csv').addTo(map);  
        
+        var EngerDataPoint = L.marker([46.7761, -92.1250]).addTo(map);
+        
+        EngerDataPoint.bindPopup("<h3>Enger Tower</h3><p>Duluth, Mn<br>Beautiful view on the hill.</p>");
+        
+        var AmsoilDataPoint = L.marker([46.7804, -92.0997]).addTo(map);
+        
+        AmsoilDataPoint.bindPopup("Duluth, MN.");
+        
+        var LiftBridgeDataPoint = L.marker([46.7797, -92.0935]).addTo(map);
+        
+        LiftBridgeDataPoint.bindPopup("Duluth,MN.");
         
         
 </script>
