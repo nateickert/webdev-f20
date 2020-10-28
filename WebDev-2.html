@@ -108,7 +108,7 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenSt
         return L.marker (latlng, airportIcon }
 });
         
-        var airportIcon = L.icon({iconUrl: 'airport.png',iconSize: [40,40] });
+        var airportIcon = L.icon({iconUrl:'airport.png',iconSize: [40,40] });
        
         
         var airportsLayer = omnivore.csv('airports.csv', null, airportsLayerTemplate);
