@@ -18,7 +18,12 @@
             source: https://leafletjs.com/examples/custom-icons/
             code to add header:
             https://kristofj-umd.github.io/webdev-f19/assignments/webdev1.html
-            
+            code to add points:
+            source:http://duspviz.mit.edu/web-map-workshop/leaflet-js/
+            code to latlng pop-up
+            source:http://duspviz.mit.edu/web-map-workshop/leaflet-js/
+            code to add change base map
+            source: http://leaflet-extras.github.io/leaflet-providers/preview/
             
         */
         body {
@@ -97,13 +102,16 @@
     // Create variable to hold map element, give initial settings to map
     var map = L.map('map',{ center: [46.7867, -92.1005], zoom: 12});
     // Add OpenStreetMap tile layer to map element
-     
-      
         
-        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+         var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+	maxZoom: 20,
+	attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+             apikey: 'd8ebd0005b0d499b9953b6859696b681',
+}).addTo(map);
+        
+         
     
-        
-         omnivore.csv('airports.csv').addTo(map);  
+        omnivore.csv('airports.csv').addTo(map);  
        
         var EngerDataPoint = L.marker([46.7761, -92.1250]).addTo(map);
         
@@ -117,7 +125,20 @@
         
         LiftBridgeDataPoint.bindPopup("Duluth,MN.");
         
-        
+        var popup = L.popup();
+
+// Write function to set Properties of the Popup
+function onMapClick(e) {
+    popup
+        .setLatLng(e.latlng)
+        .setContent("You clicked the map at " + e.latlng.toString())
+        .openOn(map);
+}
+
+// Listen for a click event on the Map element
+map.on('click', onMapClick);
+   
+
 </script>
 </body>
 </html>
