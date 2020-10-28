@@ -18,12 +18,16 @@
             source: https://leafletjs.com/examples/custom-icons/
             code to add header:
             https://kristofj-umd.github.io/webdev-f19/assignments/webdev1.html
+
             code to add points:
             source:http://duspviz.mit.edu/web-map-workshop/leaflet-js/
             code to latlng pop-up
             source:http://duspviz.mit.edu/web-map-workshop/leaflet-js/
             code to add change base map
             source: http://leaflet-extras.github.io/leaflet-providers/preview/
+=======
+            
+
             
         */
         body {
@@ -102,6 +106,7 @@
     // Create variable to hold map element, give initial settings to map
     var map = L.map('map',{ center: [46.7867, -92.1005], zoom: 12});
     // Add OpenStreetMap tile layer to map element
+
         
          var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
 	maxZoom: 20,
@@ -138,6 +143,17 @@ function onMapClick(e) {
 // Listen for a click event on the Map element
 map.on('click', onMapClick);
    
+
+=======
+     
+      
+        
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+        
+       
+       
+        
+        omnivore.csv('airports.csv').addTo(map);
 
 </script>
 </body>
