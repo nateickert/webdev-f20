@@ -11,6 +11,13 @@
     <div id="map" style="width: 705px; height: 375px"></div>
     <!-- Add the Leaflet JavaScript library -->
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+    <body>
+    ...
+        <!-- HTML Page Elements are here -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- Web Map Scripts are here -->
+    ...
+</body>
     <script>
     // Create variable to hold map element, give initial settings to map
     var map = L.map('map',{ center: [42.362432, -71.086086], zoom: 14});
@@ -47,8 +54,16 @@ function onMapClick(e) {
 // Listen for a click event on the Map element
 map.on('click', onMapClick);
         
-
-
+ // load GeoJSON from an external file
+ $.getJSON("coffee_cafes.geojson",function(data){
+    // add GeoJSON layer to the map once the file is loaded
+    L.geoJson(data,{
+        onEachFeature: function (feature, layer) {
+            layer.bindPopup(feature.properties.name);
+        }
+    }).addTo(map);
+}); 
 </script>
+   
 </body>
 </html>
