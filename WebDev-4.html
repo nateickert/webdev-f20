@@ -95,77 +95,100 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
     // Create variable to hold map element, give initial settings to map
-    var map = L.map('map',{ center: [46.7867, -92.1005], zoom: 12});
+    var map = L.map('map',{ center: [46.7867, -92.1005], zoom: 11});
     // Add OpenStreetMap tile layer to map element
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
         
-        // load GeoJSON from an external file        
-$.getJSON("duluth_precincts_WGS84.geojson",function(data){
+    
+         // load GeoJSON from an external file----Following Code is sourced from https://kristofj-umd.github.io/webdev-f19/assignments/webdev4.html
+            
+        $.getJSON("duluth_precincts_WGS84.geojson",function(data){
+            
+            // add GeoJSON layer to the map once the file is loaded
+            L.geoJson(data,{
+                style: function (feature) {
 
-    // add GeoJSON layer to the map once the file is loaded
-    L.geoJson(data,{
-        style: function (feature) {
+                    // calculate party percent of vote using function
+                    var votePcts = calculatePartyPct(feature);
+                    
+                    // setup a fill variable that we will assign values to below
+                    var fill;
+                    // assign colors from the ColorBrewer yellow-green scale
+                    var colors = ['#ca0020','#f4a582','#f7f7f7','#92c5de','#0571b0'];
+                    
+                    // Create a manual, easy to read classification
+                    // It's a bit skewed due to how democrat-leaning Duluth is
+                    // assign color values (from ColorBrewer) based on voting
+                    // percentages
+                    console.log('votePcts', votePcts);
+                    
+                    // republican 35% or more
+                    if (votePcts.rep >= 40) {
+                        fill = colors[0];
+                        console.log('rep40');
+                    }
+                    // republican 30% or more
+                    else if (votePcts.rep >= 35) {
+                        fill = colors[1];
+                        console.log('rep30');
+                    }
+                    // fairly even (both parties within 1%)
+                    else if (votePcts.rep >= 30 && votePcts.dem <= 59) {
+                        fill = colors[2];
+                        console.log('mid');
+                    }
+                    // democrat 65% or more
+                    else if (votePcts.dem >= 60 && votePcts.dem <= 65) {
+                        fill = colors[3];
+                        console.log('dem65');
+                    }
+                    // democrat 75% or more
+                    else {
+                        fill = colors[4];
+                        console.log('else');
+                    }
 
-            // calculate third party percent of vote using function
-            var thirdPartyPct = calculateThirdPartyPct(feature);
+                    // return style specification
+                    return {
+                        color: '#636363',
+                        weight: 2,
+                        fillColor: fill,
+                        fillOpacity: 0.7
+                    }
+                },
+                
+                // do something to each feature
+                // in this case create a popup
+                onEachFeature: function (feature, layer) {
+                    // calculate party percent of vote using function
+                    var votePcts = calculatePartyPct(feature);
+                    // show name of precinct and third party percent in popup
+                    layer.bindPopup(
+                        "<h3>" + feature.properties.PCTNAME + "</h3>" +
+                        "<p>Democrat Vote: <span class='dem'>" + votePcts.dem + "%</span></p>" +
+                        "<p>Republican Vote: <span class='rep'>" + votePcts.rep + "%</span></p>"
+                    );
+                }
+            }).addTo(map);
+        });	
+        
+        // a function that takes a feature and returns the percent of the vote
+        // that belongs to Republicans and Democrats in the form of a vote object
+        function calculatePartyPct(feature) {
+            var demVote = feature.properties.USPRSDFL;
+            var repVote = feature.properties.USPRSR;
+            var totalVote = feature.properties.USPRSTOTAL;
 
-            // assign colors from the ColorBrewer yellow-green scale
-            var fill;
-            // equal interval classification
-            // 7% or less
-            if (thirdPartyPct <= 7) {
-                fill = '#f7fcb9';
-            }
-            // 11% or less
-            else if (thirdPartyPct <= 11) {
-                fill = '#addd8e';
-            }
-            // 12% or more
-            else {
-                fill = '#31a354';
-            }
-
-            // FIXME: remove existing symbolization and create a diverging
-            // symbology based the democrat or republic vote as a percent
-            // of the total vote.
-            // Use Colorbrewer's 5-class Red-Blue colors for this
-            // http://colorbrewer2.org/#type=diverging&scheme=RdBu&n=5
-
-            // return style specification
+            // calculate democratic as a percent of the total vote
+            var demPct = Math.round(demVote/totalVote*100);
+            // calculate republican as a percent of the total vote
+            var repPct = Math.round(repVote/totalVote*100);
+            // return the voting percentages as a JS Object
             return {
-                color: '#636363',
-                weight: 2,
-                fillColor: fill,
-                fillOpacity: 0.7
-            }
-        },
-
-        // do something to each feature
-        // in this case create a popup
-        onEachFeature: function (feature, layer) {
-            var thirdPartyPct = calculateThirdPartyPct(feature);
-            // show name of precinct and third party percent in popup
-            layer.bindPopup(
-                "<h3>" + feature.properties.PCTNAME + "</h3>" +
-                "<p>Third Party Vote: " + thirdPartyPct + "%</p>"
-            );
+                rep: repPct,
+                dem: demPct
+            };
         }
-    }).addTo(map);
-});	
-
-// a function that takes a feature and returns the percent of the vote
-// that doesn't belong to Republican or Democrat (ie. Third Party)
-function calculateThirdPartyPct(feature) {
-    var demVote = feature.properties.USPRSDFL;
-    var repVote = feature.properties.USPRSR;
-    var totalVote = feature.properties.USPRSTOTAL;
-    // third party vote is whatever is left over from dem and rep vote
-    var thirdPartyVote = (totalVote - demVote - repVote);
-    // calculate as a percent of the total vote
-    var thirdPartyPct = Math.round(thirdPartyVote/totalVote*100);
-    // return the third party percent for this feature
-    return thirdPartyPct;
-}
 </script>
 </body>
 </html>
