@@ -97,7 +97,13 @@
     // Create variable to hold map element, give initial settings to map
     var map = L.map('map',{ center: [46.7867, -92.1005], zoom: 11});
     // Add OpenStreetMap tile layer to map element
-L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+
+         
+       var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+	maxZoom: 20,
+	attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+}).addTo(map);
+        
         
     
          // load GeoJSON from an external file----Following Code is sourced from https://kristofj-umd.github.io/webdev-f19/assignments/webdev4.html
