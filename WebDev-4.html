@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Leaflet Map</title>
+    <!-- External Stylesheets -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    
+    
+    <!-- CSS Styling Start-->
+    <style>
+        /* 
+            styling to make map full-screen
+            source: https://leafletjs.com/examples/mobile/
+            code to add header:
+            https://kristofj-umd.github.io/webdev-f19/assignments/webdev1.html
+            jquery code
+            source: https://github.com/kristofj-umd/webdev-unit/wiki/Lesson-4
+            GeoJson Symbolization code:
+            source: https://github.com/kristofj-umd/webdev-unit/blob/master/precincts-geojson.js
+        */
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+        }
+        #map {
+            top: 60px;
+        }
+        
+        /*  
+            Header styling
+            ref: http://jsfiddle.net/agorshkov23/5osbcpyc/
+        */
+        #header {
+            /* positions at the top of the page */
+            top: 0;
+            /* make it full width */
+            width: 100%;
+            /* make it visible on top of the map */
+            z-index: 999999;
+            /* fixed position within <body> */
+            position: fixed;
+            /* note that the map is positioned this far from the top of the
+            page*/
+            height: 60px;
+            /* white text */
+            color: white;
+            /* green background */
+            background-color: black;
+            /* some spacing */
+            padding-left: 12px;
+            /* my attempt at not overlapping the map*/
+            overflow: hidden;
+            /* different font */
+            font-family: Helvetica, sans-serif;
+        }
+        /* header children styling */
+        #header * {
+            /* put everything on the same line */
+            display: inline-block;
+            margin-right: 20px;
+            margin-top: 10px;
+        }
+        /* bring items to the right */
+        .right {
+            float: right;
+        }
+        /* link or anchor tag(<a>) styling */
+        a {
+            color: aqua;
+        }
+        /* put this text in line with other text in header */
+        #header h5 {
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+   
+    <!-- Header -->
+    <header id="header">
+        <h2>Web Dev 1</h2>
+        <h3><a href="https://leafletjs.com" target="_blank">I built this with leaflet</a></h3>
+        <h5 class="right">GIS4533 - Fall 2020 - Nate Ickert</h5>
+    </header>
+    <!-- Our web map and content will go here -->
+    <div id="map"></div>
+    <!-- Add the Leaflet JavaScript library -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+    // Create variable to hold map element, give initial settings to map
+    var map = L.map('map',{ center: [46.7867, -92.1005], zoom: 12});
+    // Add OpenStreetMap tile layer to map element
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+        
+        // load GeoJSON from an external file        
+$.getJSON("duluth_precincts_WGS84.geojson",function(data){
+
+    // add GeoJSON layer to the map once the file is loaded
+    L.geoJson(data,{
+        style: function (feature) {
+
+            // calculate third party percent of vote using function
+            var thirdPartyPct = calculateThirdPartyPct(feature);
+
+            // assign colors from the ColorBrewer yellow-green scale
+            var fill;
+            // equal interval classification
+            // 7% or less
+            if (thirdPartyPct <= 7) {
+                fill = '#f7fcb9';
+            }
+            // 11% or less
+            else if (thirdPartyPct <= 11) {
+                fill = '#addd8e';
+            }
+            // 12% or more
+            else {
+                fill = '#31a354';
+            }
+
+            // FIXME: remove existing symbolization and create a diverging
+            // symbology based the democrat or republic vote as a percent
+            // of the total vote.
+            // Use Colorbrewer's 5-class Red-Blue colors for this
+            // http://colorbrewer2.org/#type=diverging&scheme=RdBu&n=5
+
+            // return style specification
+            return {
+                color: '#636363',
+                weight: 2,
+                fillColor: fill,
+                fillOpacity: 0.7
+            }
+        },
+
+        // do something to each feature
+        // in this case create a popup
+        onEachFeature: function (feature, layer) {
+            var thirdPartyPct = calculateThirdPartyPct(feature);
+            // show name of precinct and third party percent in popup
+            layer.bindPopup(
+                "<h3>" + feature.properties.PCTNAME + "</h3>" +
+                "<p>Third Party Vote: " + thirdPartyPct + "%</p>"
+            );
+        }
+    }).addTo(map);
+});	
+
+// a function that takes a feature and returns the percent of the vote
+// that doesn't belong to Republican or Democrat (ie. Third Party)
+function calculateThirdPartyPct(feature) {
+    var demVote = feature.properties.USPRSDFL;
+    var repVote = feature.properties.USPRSR;
+    var totalVote = feature.properties.USPRSTOTAL;
+    // third party vote is whatever is left over from dem and rep vote
+    var thirdPartyVote = (totalVote - demVote - repVote);
+    // calculate as a percent of the total vote
+    var thirdPartyPct = Math.round(thirdPartyVote/totalVote*100);
+    // return the third party percent for this feature
+    return thirdPartyPct;
+}
+</script>
+</body>
+</html>
