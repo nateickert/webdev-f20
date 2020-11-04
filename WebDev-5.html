@@ -1,93 +1,60 @@
-<!DOCTYPE html>
-<html>
+<!--
+  An example displaying a hosted feature layer
+  ref: https://esri.github.io/esri-leaflet/tutorials/working-with-feature-layers.html
+ -->
+
+<!doctype html>
+<html lang="en">
 <head>
-	<meta charset="utf-8">
-	<title>Leaflet Map</title>
-    <!-- External Stylesheets -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <!-- CSS Styling Start-->
-    <style>
-        /* 
-            styling to make map full-screen
-            source: https://leafletjs.com/examples/mobile/
-        */
-        body {
-            padding: 0;
-            margin: 0;
-        }
-        html, body, #map {
-            height: 100%;
-            width: 100%;
-        }
-        #map {
-            top: 60px;
-        }
-        
-        /*  
-            Header styling
-            ref: http://jsfiddle.net/agorshkov23/5osbcpyc/
-        */
-        #header {
-            /* positions at the top of the page */
-            top: 0;
-            /* make it full width */
-            width: 100%;
-            /* make it visible on top of the map */
-            z-index: 999999;
-            /* fixed position within <body> */
-            position: fixed;
-            /* note that the map is positioned this far from the top of the
-            page*/
-            height: 60px;
-            /* white text */
-            color: white;
-            /* green background */
-            background-color: black;
-            /* some spacing */
-            padding-left: 12px;
-            /* my attempt at not overlapping the map*/
-            overflow: hidden;
-            /* different font */
-            font-family: Helvetica, sans-serif;
-        }
-        /* header children styling */
-        #header * {
-            /* put everything on the same line */
-            display: inline-block;
-            margin-right: 20px;
-            margin-top: 10px;
-        }
-        /* bring items to the right */
-        .right {
-            float: right;
-        }
-        /* link or anchor tag(<a>) styling */
-        a {
-            color: aqua;
-        }
-        /* put this text in line with other text in header */
-        #header h5 {
-            margin-top: 25px;
-        }
-    </style>
+  <meta charset="utf-8">
+  <title>Map of Transit Shelters in the Metro- NI</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+  <!-- Load Leaflet from CDN-->
+   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+    integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+    crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+    integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+    crossorigin=""></script>
+
+  <!-- Load Esri Leaflet from CDN -->
+  <script src="https://unpkg.com/esri-leaflet@2.2.3/dist/esri-leaflet.js"
+    integrity="sha512-YZ6b5bXRVwipfqul5krehD9qlbJzc6KOGXYsDjU9HHXW2gK57xmWl2gU6nAegiErAqFXhygKIsWPKbjLPXVb2g=="
+    crossorigin=""></script>
+
+  <!-- Load Esri Leaflet Renderers from CDN -->
+  <script src="https://unpkg.com/esri-leaflet-renderers@2.0.6/dist/esri-leaflet-renderers.js"
+    integrity="sha512-mhpdD3igvv7A/84hueuHzV0NIKFHmp2IvWnY5tIdtAHkHF36yySdstEVI11JZCmSY4TCvOkgEoW+zcV/rUfo0A=="
+    crossorigin=""></script>
+
+  <style>
+    html,
+    body,
+    #map {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
 </head>
 <body>
-     <!-- Possible solution for a header -->
-    <header id="header">
-        <h2>Web Dev 1</h2>
-        <h3><a href="https://leafletjs.com" target="_blank">I built this with leaflet</a></h3>
-        <h5 class="right">GIS4533 - Fall 2019 - Kris Johnson</h5>
-    </header>
-    <!-- Our web map and content will go here -->
     <div id="map"></div>
-    <!-- Add the Leaflet JavaScript library -->
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
     <script>
-    // Create variable to hold map element, give initial settings to map
-    var map = L.map('map',{ center: [42.362432, -71.086086], zoom: 14});
-    // Add OpenStreetMap tile layer to map element
-L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+        // add map
+        const map = L.map('map', {
+          center: [44.9778, -93.265],
+          zoom: 10
+        });
+        // add basemap
+        const esriStreets = L.esri.basemapLayer('Gray').addTo(map);
+
+        // add hosted feature layer
+        const transitLayer = L.esri.featureLayer({url: 'https://services.arcgis.com/8df8p0NlLFEShl0r/arcgis/rest/services/Transit_SheltersNI/FeatureServer/0'}).addTo(map);
         
-</script>
+    </script>
 </body>
 </html>
+
